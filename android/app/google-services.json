@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1012050918283",
+    "firebase_url": "https://inventory-india.firebaseio.com",
+    "project_id": "inventory-india",
+    "storage_bucket": "inventory-india.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012050918283:android:777f8b5f3e83fbeaf10d8e",
+        "android_client_info": {
+          "package_name": "com.example.inventory"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012050918283-4sa9vp3m6pnpu0ejfdip79h0hr7d142e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.inventory",
+            "certificate_hash": "d5c36255ac2e8d49935a1bc18a92764f7d42e60d"
+          }
+        },
+        {
+          "client_id": "1012050918283-i8iaoscps9kmla5l4hqsp2joelb9f2mb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLm84yQDgUAgfGoUSEmBWtn2wXVa5EW_g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012050918283-i8iaoscps9kmla5l4hqsp2joelb9f2mb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
