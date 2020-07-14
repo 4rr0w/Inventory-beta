@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:inventory/model/home_model.dart';
+import 'package:Inventory/model/home_model.dart';
 import 'package:provider/provider.dart';
 
 class TextFieldWidget extends StatelessWidget {
@@ -14,7 +14,8 @@ class TextFieldWidget extends StatelessWidget {
   final bool box;
   final Color textColor;
   final bool enabled;
-  final String text;
+  final TextEditingController controller;
+  final String errortext;
 
 
 
@@ -28,8 +29,9 @@ class TextFieldWidget extends StatelessWidget {
     this.typeNum : false,
     this.box: false,
     this.enabled: true,
-    this.text : null,
     this.textColor: Colors.white,
+    this.controller,
+    this.errortext,
   });
 
 
@@ -48,8 +50,7 @@ class TextFieldWidget extends StatelessWidget {
     }
 
     return TextField(
-
-      controller: TextEditingController(text: text),
+      controller: controller,
       enabled: enabled,
       maxLines: !obscureText  && box ? null : 1,
       inputFormatters: [LengthLimitingTextInputFormatter(maxlength)],
@@ -57,6 +58,7 @@ class TextFieldWidget extends StatelessWidget {
       keyboardType: Box(),
       cursorColor: textColor,
       decoration: InputDecoration(
+        errorText: errortext,
         labelText: hintText,
         prefixIcon: Icon(
           prefixIconData,
@@ -74,6 +76,14 @@ class TextFieldWidget extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide:  BorderSide(color: Colors.black),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide:  BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide:  BorderSide(color: Colors.red),
         ),
         suffixIcon: GestureDetector(
         onTap: () {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:inventory/ui/pages/home_view.dart';
+import 'package:Inventory/ui/pages/login_view.dart';
 
 class NavDrawer extends StatelessWidget {
   @override
@@ -41,7 +41,7 @@ class NavDrawer extends StatelessWidget {
             title: Text('Logout'),
             onTap: (){
             Navigator.push(context,
-            MaterialPageRoute(builder: (context) => HomeView()),
+            MaterialPageRoute(builder: (context) => LoginView()),
             );
             },
           ),

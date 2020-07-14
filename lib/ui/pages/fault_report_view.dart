@@ -1,16 +1,27 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory/ui/pages/dashboard_view.dart';
-import 'package:inventory/ui/pages/otp_view.dart';
-import 'package:inventory/widget/button_widget.dart';
-import 'package:inventory/widget/text_field.dart';
+import 'package:Inventory/ui/pages/dashboard_view.dart';
+import 'package:Inventory/ui/pages/otp_view.dart';
+import 'package:Inventory/widget/button_widget.dart';
+import 'package:Inventory/widget/text_field.dart';
 
 
-class FaultReportView extends StatelessWidget {
+class FaultReportView extends StatefulWidget {
+  @override
+  _FaultReportViewState createState() => _FaultReportViewState();
+}
+
+class _FaultReportViewState extends State<FaultReportView> {
+  final _title = TextEditingController();
+  final _description = TextEditingController();
+
+  bool _nullTitle = false;
+  bool _nullDescription = false;
+
   @override
   Widget build(BuildContext context) {
     String Currentdate = DateTime.now().day.toString() + '/' + DateTime.now().month.toString() + '/' + DateTime.now().year.toString();
-    final amount = TextEditingController();
+
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -33,6 +44,29 @@ class FaultReportView extends StatelessWidget {
 
 
                     TextFieldWidget(
+                      hintText: 'Site Code',
+                      textColor: Colors.black,
+                      enabled:  false,
+                      prefixIconData: Icons.not_listed_location,
+
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    TextFieldWidget(
+                      hintText: 'Current Date',
+                      prefixIconData: Icons.date_range,
+                      maxlength: 20,
+                      textColor: Colors.black,
+                      enabled:  false,
+
+
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+
+                    TextFieldWidget(
                       hintText: 'Part ID if Available',
                       prefixIconData: Icons.vpn_key,
                       maxlength: 20,
@@ -44,23 +78,12 @@ class FaultReportView extends StatelessWidget {
                       height: 10.0,
                     ),
                     TextFieldWidget(
-                      hintText: 'Site Code',
-                      textColor: Colors.black,
-                      text: '1',
-                      enabled:  false,
-                      prefixIconData: Icons.not_listed_location,
-
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    TextFieldWidget(
-                      hintText: 'Current Date',
-                      text: Currentdate,
-                      prefixIconData: Icons.date_range,
+                      controller: _title,
+                      errortext: _nullTitle ? "This is required!" : null,
+                      hintText: 'Fault Title',
+                      prefixIconData: Icons.title,
                       maxlength: 20,
                       textColor: Colors.black,
-                      enabled:  false,
 
 
                     ),
@@ -68,7 +91,9 @@ class FaultReportView extends StatelessWidget {
                       height: 10.0,
                     ),
                     TextFieldWidget(
+                      controller: _description,
                       hintText: 'Fault Description',
+                      errortext:  _nullDescription ? "This is required!" : null,
                       prefixIconData: Icons.description,
                       maxlength: 100,
                       box: true,
@@ -102,10 +127,19 @@ class FaultReportView extends StatelessWidget {
         child: GestureDetector(
           onTap: ()
           {
-            Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => OtpView())
-            );
+
+            setState(() {
+              _nullTitle = _title.text.isEmpty;
+              _nullDescription = _description.text.isEmpty;
+
+            });
+
+            if((!_nullDescription && !_nullTitle)) {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => OtpView())
+              );
+            }
           },
           child: ButtonWidget(
             title: 'Report',
@@ -113,7 +147,7 @@ class FaultReportView extends StatelessWidget {
           ),
         ),
       ),
-    
+
     );
   }
 }

@@ -1,10 +1,11 @@
 
 import 'package:flutter/material.dart';
-import 'package:inventory/ui/pages/fault_report_view.dart';
+import 'package:Inventory/ui/pages/fault_report_view.dart';
+import 'package:Inventory/model/user_management.dart';
 import 'package:provider/provider.dart';
 
 import 'model/home_model.dart';
-import 'ui/pages/home_view.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
-          '/': (context) => HomeView(),
+          '/': (context) => UserManagement().handleAuth(),
           '/FaultReportView': (context) => FaultReportView(),
 
         },

@@ -1,19 +1,99 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory/model/home_model.dart';
-import 'package:inventory/ui/pages/signup_view.dart';
-import 'package:inventory/widget/button_widget.dart';
-import 'package:inventory/widget/text_field.dart';
-import 'package:inventory/widget/wave_widget.dart';
-
+import 'package:Inventory/model/home_model.dart';
+import 'package:Inventory/ui/pages/dashboard_view.dart';
+import 'package:Inventory/ui/pages/signup_view.dart';
+import 'package:Inventory/widget/button_widget.dart';
+import 'package:Inventory/widget/text_field.dart';
+import 'package:Inventory/widget/wave_widget.dart';
 import 'package:provider/provider.dart';
 
-class HomeView extends StatelessWidget {
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+class LoginView extends StatefulWidget {
+  @override
+  _LoginViewState createState() => _LoginViewState();
+}
+
+class _LoginViewState extends State<LoginView> {
+
+
+
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+
+  bool _nullEmail = false;
+  bool _invalidPass = false;
+
+  FlutterToast flutterToast;
+
+  @override
+  void initState() {
+    super.initState();
+    flutterToast = FlutterToast(context);
+  }
+
+  _showToast(String message) {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Colors.red,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.warning),
+          SizedBox(
+            width: 12.0,
+          ),
+          Text(
+              message.substring(8,50) + ".",
+              style: TextStyle(
+                  color : Colors.white),
+              ),
+
+        ],
+      ),
+    );
+
+
+    flutterToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 2),
+    );
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final bool keyboardOpen = MediaQuery.of(context).viewInsets.bottom > 50;
     final model = Provider.of<HomeModel>(context);
+
+    Future<void> SignIn() async{
+      try {
+        FirebaseUser user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: _email.text, password: _password.text)).user;
+        if (user != null) {
+          Navigator.push(context,
+            MaterialPageRoute(builder: (context) => Dashboard()),
+          );
+        }
+        else{
+          print('wrong');
+        }
+
+      }catch(e)
+      {
+        _showToast(e.message);
+      }
+
+
+    }
+
 
     return Scaffold(
       backgroundColor: Colors.blue,
@@ -56,11 +136,11 @@ class HomeView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   TextFieldWidget(
-                    hintText: 'Site Code',
-                    typeNum: true,
-                    maxlength: 2,
+                    controller: _email,
+                    errortext: _nullEmail ? "Invalid Email!" : null,
+                    hintText: 'Email',
                     obscureText: false,
-                    prefixIconData: Icons.not_listed_location,
+                    prefixIconData: Icons.email,
 
                   ),
                   SizedBox(
@@ -70,9 +150,11 @@ class HomeView extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: <Widget>[
                       TextFieldWidget(
+                        controller: _password,
+                        errortext: _invalidPass ? "" : null,
                         hintText: 'Password',
                         maxlength: 30,
-                        obscureText: model.isVisible ? false : true,
+                        obscureText: !model.isVisible,
                         prefixIconData: Icons.lock_outline,
                         suffixIconData: model.isVisible
                             ? Icons.visibility
@@ -92,15 +174,26 @@ class HomeView extends StatelessWidget {
                   SizedBox(
                     height: 30.0,
                   ),
-                  GestureDetector(
-                    onTap: (){
-                          Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => SignupView()),
-                          );
-                    },
-                    child: ButtonWidget(
-                      title: 'Login',
-                      hasBorder: false,
+                  Material(
+                    elevation: 15.0,
+                    shadowColor: Colors.black,
+                    borderRadius: BorderRadius.circular(10.0),
+                    child: InkWell(
+
+                      onTap: (){
+                          setState(() {
+                            _nullEmail = !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_email.text);
+                            _invalidPass= _password.text.isEmpty;
+                          });
+
+                      if (!_nullEmail && !_invalidPass) {
+                       SignIn();
+                      }
+                      },
+                      child: ButtonWidget(
+                        title: 'Login',
+                        hasBorder: false,
+                      ),
                     ),
                   ),
                   SizedBox(

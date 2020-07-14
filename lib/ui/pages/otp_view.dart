@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory/ui/pages/dashboard_view.dart';
-import 'package:inventory/ui/pages/home_view.dart';
-import 'package:inventory/widget/button_widget.dart';
-import 'package:inventory/widget/text_field.dart';
-import 'package:inventory/widget/wave_widget.dart';
+import 'package:Inventory/ui/pages/dashboard_view.dart';
+import 'package:Inventory/ui/pages/login_view.dart';
+import 'package:Inventory/widget/button_widget.dart';
+import 'package:Inventory/widget/text_field.dart';
+import 'package:Inventory/widget/wave_widget.dart';
 
 class OtpView extends StatelessWidget {
   @override
@@ -92,7 +92,7 @@ class OtpView extends StatelessWidget {
                           onTap: (){
                             Navigator.pushAndRemoveUntil(
                                 context,
-                                MaterialPageRoute(builder: (context) => HomeView()),
+                                MaterialPageRoute(builder: (context) => LoginView()),
                                     (r) => false
                             );
                           },

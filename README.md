@@ -1,6 +1,6 @@
-# inventory
+# Inventory
 
-Inventory app
+A new Flutter project.
 
 ## Getting Started
 
