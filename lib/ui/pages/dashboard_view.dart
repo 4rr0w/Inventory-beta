@@ -1,7 +1,14 @@
+import 'package:Inventory/ui/pages/fault_history_view.dart';
+import 'package:Inventory/widget/loader_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
 import 'package:Inventory/widget/nav_drawer.dart';
 import 'package:Inventory/widget/wave_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'fault_report_view.dart';
 
 class Dashboard extends StatefulWidget{
   @override
@@ -9,6 +16,50 @@ class Dashboard extends StatefulWidget{
 }
 
 class _DashboardState extends State<Dashboard> {
+
+  String id,email,type;
+  int site;
+  final db = Firestore.instance;
+  String userTitle;
+  bool loading = false;
+  bool active;
+
+  Future<void> getUserInfo()async{
+    setState(() {
+      loading = true;
+    });
+
+    var firebaseUser = await FirebaseAuth.instance.currentUser();
+    id = firebaseUser.uid;
+    email = firebaseUser.email;
+    DocumentReference documentReference = await Firestore.instance.collection("Users").document(id);
+    await documentReference.get().then((datasnapshot) async {
+      if(datasnapshot.exists){
+        site = await datasnapshot.data['site'];
+        type = await datasnapshot.data['type'];
+        active = await datasnapshot.data['active'];
+      }
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('id', id);
+    prefs.setString('email', email);
+    prefs.setString('type', type);
+    prefs.setBool('active', active);
+
+
+    prefs.setInt("site",site);
+
+    setState(() {
+      loading = false;
+    });
+
+  }
+
+  @override
+  void initState() {
+    getUserInfo();
+    super.initState();
+  }
 
   Column MyItems(IconData icon,String heading, Color color){
     return Column(
@@ -51,7 +102,7 @@ class _DashboardState extends State<Dashboard> {
           onTap: (){
             Navigator.pushNamed(
                 context,
-                "/FaultReportView"
+                route
             );
           },
           child: MyItems(icon,text,Colors.black)),
@@ -61,9 +112,16 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context){
     final size = MediaQuery.of(context).size;
     final height =size.height;
-    return Scaffold(
+
+
+    return loading ? Loading() : Scaffold(
       backgroundColor: Colors.white,
-      drawer: NavDrawer(),
+      drawer: NavDrawer(
+        site: site.toString(),
+        email: email,
+        type : type,
+        active : active,
+      ),
       appBar: AppBar(
         backgroundColor: Colors.blue,
         title: Text('Dashboard',
@@ -74,32 +132,32 @@ class _DashboardState extends State<Dashboard> {
       ),
       body: Stack(
         children: [
-          Container(
-            height: size.height - 500,
-            color: Colors.white,
-          ),
-
-          AnimatedPositioned(
-            duration: Duration(milliseconds: 14000),
-            curve: Curves.easeOutQuad,
-            top: 0,
-            child: WaveWidget(
-              size: size,
-              yOffset: height / 1.5,
-              color: Colors.blue,
-            ),
-          ),
-          AnimatedPositioned(
-            duration: Duration(milliseconds: 14000),
-            curve: Curves.easeOutQuad,
-            top: 0,
-            child: WaveWidget(
-              size: size,
-              yOffset: height / 1.5,
-              color: Colors.blue,
-              xOffset: true,
-            ),
-          ),
+//          Container(
+//            height: size.height - 500,
+//            color: Colors.white,
+//          ),
+//
+//          AnimatedPositioned(
+//            duration: Duration(milliseconds: 14000),
+//            curve: Curves.easeOutQuad,
+//            top: 0,
+//            child: WaveWidget(
+//              size: size,
+//              yOffset: height / 1.5,
+//              color: Colors.blue,
+//            ),
+//          ),
+//          AnimatedPositioned(
+//            duration: Duration(milliseconds: 14000),
+//            curve: Curves.easeOutQuad,
+//            top: 0,
+//            child: WaveWidget(
+//              size: size,
+//              yOffset: height / 1.5,
+//              color: Colors.blue,
+//              xOffset: true,
+//            ),
+//          ),
 
 
           Padding(
@@ -110,8 +168,38 @@ class _DashboardState extends State<Dashboard> {
               mainAxisSpacing: 12.0,
               padding: EdgeInsets.symmetric(horizontal:15.0,vertical:10.0),
               children: <Widget>[
-                inkwellsplash(Icons.report,"Fault Reporting","/FaultReportView"),
-                inkwellsplash(Icons.history,"Fault History","/FaultReportView"),
+                  Material(
+                  elevation:  12.0,
+                  shadowColor: Color(0x802196F3),
+                  borderRadius: BorderRadius.circular(24.0),
+                  child: InkWell(
+                      borderRadius: BorderRadius.circular(24.0),
+                      splashColor: Colors.blue,
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => FaultReportView(site: site,))
+                        );
+
+                      },
+                      child: MyItems(Icons.report,"Fault Reporting",Colors.black)),
+                ),
+                Material(
+                  elevation:  12.0,
+                  shadowColor: Color(0x802196F3),
+                  borderRadius: BorderRadius.circular(24.0),
+                  child: InkWell(
+                      borderRadius: BorderRadius.circular(24.0),
+                      splashColor: Colors.blue,
+                      onTap: (){
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => FaultHistoryView(site: site))
+                        );
+
+                      },
+                      child: MyItems(Icons.history,"Fault History",Colors.black)),
+                ),
                 inkwellsplash(Icons.flag,"Fault Closure","/FaultReportView"),
                 inkwellsplash(Icons.perm_phone_msg,"Customer Care","/FaultReportView"),
                  

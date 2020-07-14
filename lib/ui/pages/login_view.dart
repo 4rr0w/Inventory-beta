@@ -1,3 +1,5 @@
+import 'package:Inventory/model/user_management.dart';
+import 'package:Inventory/widget/loader_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Inventory/model/home_model.dart';
@@ -7,7 +9,6 @@ import 'package:Inventory/widget/button_widget.dart';
 import 'package:Inventory/widget/text_field.dart';
 import 'package:Inventory/widget/wave_widget.dart';
 import 'package:provider/provider.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -25,7 +26,7 @@ class _LoginViewState extends State<LoginView> {
 
   bool _nullEmail = false;
   bool _invalidPass = false;
-
+  bool loading = false;
   FlutterToast flutterToast;
 
   @override
@@ -34,25 +35,35 @@ class _LoginViewState extends State<LoginView> {
     flutterToast = FlutterToast(context);
   }
 
-  _showToast(String message) {
+  _showToast(String message) async {
     Widget toast = Container(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
-        color: Colors.red,
+        color: Colors.white,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.warning),
+          Icon(Icons.warning
+            , color: Colors.red,),
           SizedBox(
-            width: 12.0,
+            width: 15.0,
           ),
-          Text(
-              message.substring(8,50) + ".",
-              style: TextStyle(
-                  color : Colors.white),
+          Center(
+            child: Expanded(
+              child: Text(
+                message,
+                style: TextStyle(
+                    color: Colors.black),
+                overflow: TextOverflow.fade,
+                maxLines: 1,
+                softWrap: false,
+
+
               ),
+            ),
+          ),
 
         ],
       ),
@@ -77,25 +88,34 @@ class _LoginViewState extends State<LoginView> {
       try {
         FirebaseUser user = (await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _email.text, password: _password.text)).user;
+        setState(() {
+          loading = false;
+        });
+
         if (user != null) {
           Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Dashboard()),
+            MaterialPageRoute(builder: (context) => UserManagement().handleAuth()),
           );
+
         }
         else{
-          print('wrong');
+          _showToast("Something went wrong.");
+          setState(() {
+            loading = false;
+          });
         }
 
       }catch(e)
       {
+        setState(() {
+          loading = false;
+        });
         _showToast(e.message);
       }
-
-
     }
 
 
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       backgroundColor: Colors.blue,
       body: SingleChildScrollView(
         child: Stack(
@@ -180,14 +200,16 @@ class _LoginViewState extends State<LoginView> {
                     borderRadius: BorderRadius.circular(10.0),
                     child: InkWell(
 
-                      onTap: (){
+                      onTap: () async{
                           setState(() {
                             _nullEmail = !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_email.text);
                             _invalidPass= _password.text.isEmpty;
+
                           });
 
                       if (!_nullEmail && !_invalidPass) {
-                       SignIn();
+                        loading = true;
+                        SignIn();
                       }
                       },
                       child: ButtonWidget(
