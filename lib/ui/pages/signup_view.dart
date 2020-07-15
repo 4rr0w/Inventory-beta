@@ -1,3 +1,7 @@
+import 'package:Inventory/model/user_management.dart';
+import 'package:Inventory/widget/loader_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Inventory/model/home_model.dart';
@@ -6,6 +10,7 @@ import 'package:Inventory/ui/pages/otp_view.dart';
 import 'package:Inventory/widget/button_widget.dart';
 import 'package:Inventory/widget/text_field.dart';
 import 'package:Inventory/widget/wave_widget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class SignupView extends StatefulWidget {
@@ -14,30 +19,118 @@ class SignupView extends StatefulWidget {
 }
 
 class _SignupViewState extends State<SignupView> {
-  final _name = TextEditingController();
-  final _phone = TextEditingController();
+//  final _phone = TextEditingController();
   final _email = TextEditingController();
   final _site = TextEditingController();
   final _password = TextEditingController();
   final _confPassword = TextEditingController();
+  final databaseReference = Firestore.instance;
+  FlutterToast flutterToast;
 
-  bool _nullName = false;
   bool _nullSite = false;
-  bool _invalidPhone = false;
+//  bool _invalidPhone = false;
   bool _invalidMail = false;
   bool _invalidPass = false;
   bool _passNotMatched = false;
+  bool loading = false;
 
 
   @override
   void dispose() {
-    _name.dispose();
-    _phone.dispose();
+//    _phone.dispose();
     _email.dispose();
     _site.dispose();
     _password.dispose();
     _confPassword.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+
+    super.initState();
+    flutterToast = FlutterToast(context);
+  }
+
+
+
+  _showToast(String message) async {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Colors.white,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check
+            , color: Colors.green,),
+          SizedBox(
+            width: 15.0,
+          ),
+          Expanded(
+              child: Text(
+                message,
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+                overflow: TextOverflow.fade,
+                maxLines: 1,
+                softWrap: false,
+
+
+              ),
+            ),
+
+
+        ],
+      ),
+    );
+
+
+    flutterToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 3),
+    );
+  }
+
+
+  Future<void> signUp() async{
+
+  try {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _email.text, password: _password.text);
+
+    var firebaseUser = await FirebaseAuth.instance.currentUser();
+    String id = firebaseUser.uid;
+
+    await databaseReference.collection("Users")
+        .document(id)
+        .setData({
+      'type': int.parse(_site.text) == 0 ? 'BEL Admin' : 'User' ,
+      'site': int.parse(_site.text),
+      'active': false,
+
+    });
+
+
+    _showToast("Account Created");
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => UserManagement().handleAuth()),
+
+    );
+
+  }
+  catch(e){
+    setState(() {
+      loading = false;
+    });
+      _showToast(e.message);
+  }
   }
 
 
@@ -48,7 +141,7 @@ class _SignupViewState extends State<SignupView> {
     final model = Provider.of<HomeModel>(context);
 
 
-    return Scaffold(
+    return loading ? Loading() : Scaffold(
       backgroundColor: Colors.blue,
       body: SingleChildScrollView(
         child: Stack(
@@ -88,17 +181,7 @@ class _SignupViewState extends State<SignupView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
-                  TextFieldWidget(
-                    controller: _name,
-                    errortext: _nullName ? "Can't be Empty." : null,
-                    hintText: 'Full Name',
-                    obscureText: false,
-                    prefixIconData: Icons.person,
 
-                  ),
-                 SizedBox(
-                   height: 10.0,
-                 ),
                  TextFieldWidget(
                     controller: _email,
                     hintText: 'Email',
@@ -110,19 +193,19 @@ class _SignupViewState extends State<SignupView> {
                   SizedBox(
                     height: 10.0,
                   ),
-                  TextFieldWidget(
-                    controller: _phone,
-                    hintText: 'Phone',
-                    typeNum: true,
-                    maxlength: 10,
-                    obscureText: false,
-                    prefixIconData: Icons.phone,
-                    errortext: _invalidPhone ? "Invalid Number!" : null,
-
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
+//                  TextFieldWidget(
+//                    controller: _phone,
+//                    hintText: 'Phone',
+//                    typeNum: true,
+//                    maxlength: 10,
+//                    obscureText: false,
+//                    prefixIconData: Icons.phone,
+//                    errortext: _invalidPhone ? "Invalid Number!" : null,
+//
+//                  ),
+//                  SizedBox(
+//                    height: 10.0,
+//                  ),
                   TextFieldWidget(
                     controller: _site,
                     errortext: _nullSite ? "Can't be Empty." : null,
@@ -176,18 +259,17 @@ class _SignupViewState extends State<SignupView> {
                         onTap: ()
                               {
                                 setState(() {
-                                  _nullName = _name.text.isEmpty;
                                   _nullSite = _site.text.isEmpty;
-                                  _invalidPhone = (_phone.text.length != 10);
+//                                  _invalidPhone = (_phone.text.length != 10);
                                   _invalidMail = !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_email.text);
                                   _invalidPass = !(_password.text.length >5);
                                   _passNotMatched = (_password.text != _confPassword.text);
                                 });
-                                if (!_nullSite && !_nullName && !_invalidPass && !_invalidMail && !_invalidPhone && !_passNotMatched) {
-                                    Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => OtpView())
-                                    );
+                                if (!_invalidPass  && !_nullSite && !_invalidMail &&!_passNotMatched) {
+                                  setState(() {
+                                    loading = true;
+                                  });
+                                    signUp();
                                 }
                               },
                           child: ButtonWidget(
@@ -203,10 +285,11 @@ class _SignupViewState extends State<SignupView> {
                           onTap: (){
 
                             Navigator.pushAndRemoveUntil(
-                              context,
+                                context,
                                 MaterialPageRoute(builder: (context) => LoginView()),
-                                (r) => false
+                                    (r) => false
                             );
+
                           },
                           child: Text('Already have an account? login')),
                       SizedBox(

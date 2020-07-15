@@ -9,9 +9,12 @@ class UserManagement {
     return new StreamBuilder(stream: FirebaseAuth.instance.onAuthStateChanged,
         builder:(BuildContext context, snapshot){
           if(snapshot.connectionState == ConnectionState.waiting){
-            return Loading();
-          }
+//            FirebaseAuth.instance.signOut();
+           return Loading();
+
+         }
           if(snapshot.hasData){
+            print('dash');
             return Dashboard();
           }
           return LoginView();

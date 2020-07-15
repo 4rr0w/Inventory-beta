@@ -27,7 +27,7 @@ class NavDrawer extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    type == "user"? "SITE : " + site : "Admin",
+                    type == "User" ? "SITE : " + site : "Admin",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 30,
@@ -64,9 +64,12 @@ class NavDrawer extends StatelessWidget {
           ),
 
           ListTile(
-            leading: Icon(Icons.verified_user),
-            title: Text('Profile'),
-            onTap: () => {Navigator.of(context).pop()},
+            leading: Icon(Icons.refresh),
+            title: Text('Refresh'),
+            onTap: () => {
+              Navigator.push(context,
+            MaterialPageRoute(builder: (context) => UserManagement().handleAuth()))
+          },
           ),
           ListTile(
             leading: Icon(Icons.settings),

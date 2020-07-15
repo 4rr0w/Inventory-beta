@@ -26,6 +26,7 @@ class _FaultReportViewState extends State<FaultReportView> {
   final _date = TextEditingController();
   final _partId = TextEditingController();
   final databaseReference = Firestore.instance;
+
   FlutterToast flutterToast;
 
   @override
@@ -88,10 +89,10 @@ class _FaultReportViewState extends State<FaultReportView> {
 
 
   Future<void> publishReport() async{
-    String faultId = DateTime.now().second.toString() + DateTime.now().day.toString() + DateTime.now().day.toString() + DateTime.now().year.toString() + _site.text;
+    int timestamp = DateTime.now().millisecondsSinceEpoch;
 
     await databaseReference.collection("Reports")
-        .document(faultId)
+        .document(timestamp.toString()+site.toString())
         .setData({
       'site': _site.text,
       'title': _title.text,
@@ -102,7 +103,7 @@ class _FaultReportViewState extends State<FaultReportView> {
       'closing-date': '',
       'fault-status': 'Active',
       'part-id': _partId.text,
-
+      'timestamp':  timestamp,
     });
 
     setState(() {
@@ -185,7 +186,7 @@ class _FaultReportViewState extends State<FaultReportView> {
                       errortext: _nullTitle ? "This is required!" : null,
                       hintText: 'Fault Title',
                       prefixIconData: Icons.title,
-                      maxlength: 20,
+                      maxlength: 70,
                       textColor: Colors.black,
 
 

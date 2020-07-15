@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
 import 'package:Inventory/widget/nav_drawer.dart';
 import 'package:Inventory/widget/wave_widget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'fault_report_view.dart';
@@ -23,6 +24,60 @@ class _DashboardState extends State<Dashboard> {
   String userTitle;
   bool loading = false;
   bool active;
+
+  FlutterToast flutterToast;
+
+  @override
+  void initState() {
+    getUserInfo();
+    super.initState();
+    flutterToast = FlutterToast(context);
+  }
+
+
+  _showToast(String message) async {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: Colors.white,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.warning
+            , color: Colors.deepOrange,),
+          SizedBox(
+            width: 15.0,
+          ),
+          Center(
+            child: Expanded(
+              child: Text(
+                message,
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+                overflow: TextOverflow.fade,
+                maxLines: 1,
+                softWrap: false,
+
+
+              ),
+            ),
+          ),
+
+        ],
+      ),
+    );
+
+
+    flutterToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 3),
+    );
+  }
+
 
   Future<void> getUserInfo()async{
     setState(() {
@@ -46,19 +101,12 @@ class _DashboardState extends State<Dashboard> {
     prefs.setString('type', type);
     prefs.setBool('active', active);
 
-
     prefs.setInt("site",site);
 
     setState(() {
       loading = false;
     });
 
-  }
-
-  @override
-  void initState() {
-    getUserInfo();
-    super.initState();
   }
 
   Column MyItems(IconData icon,String heading, Color color){
@@ -176,6 +224,7 @@ class _DashboardState extends State<Dashboard> {
                       borderRadius: BorderRadius.circular(24.0),
                       splashColor: Colors.blue,
                       onTap: (){
+                        site == 0 ? _showToast("Only a non-admin user can raise a fault!"):
                         Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => FaultReportView(site: site,))

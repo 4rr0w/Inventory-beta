@@ -50,19 +50,17 @@ class _LoginViewState extends State<LoginView> {
           SizedBox(
             width: 15.0,
           ),
-          Center(
-            child: Expanded(
+          Expanded(
               child: Text(
                 message,
                 style: TextStyle(
                     color: Colors.black),
                 overflow: TextOverflow.fade,
                 maxLines: 1,
-                softWrap: false,
+                softWrap: true,
 
 
               ),
-            ),
           ),
 
         ],
