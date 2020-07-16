@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Inventory/ui/pages/dashboard_view.dart';
-import 'package:Inventory/ui/pages/otp_view.dart';
+import 'package:Inventory/ui/pages/reset_password_view.dart';
 import 'package:Inventory/widget/button_widget.dart';
 import 'package:Inventory/widget/text_field.dart';
 import 'package:fluttertoast/fluttertoast.dart';

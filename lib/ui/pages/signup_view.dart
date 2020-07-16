@@ -6,7 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Inventory/model/home_model.dart';
 import 'package:Inventory/ui/pages/login_view.dart';
-import 'package:Inventory/ui/pages/otp_view.dart';
+import 'package:Inventory/ui/pages/reset_password_view.dart';
 import 'package:Inventory/widget/button_widget.dart';
 import 'package:Inventory/widget/text_field.dart';
 import 'package:Inventory/widget/wave_widget.dart';

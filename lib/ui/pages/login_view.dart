@@ -1,4 +1,5 @@
 import 'package:Inventory/model/user_management.dart';
+import 'package:Inventory/ui/pages/reset_password_view.dart';
 import 'package:Inventory/widget/loader_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -181,10 +182,17 @@ class _LoginViewState extends State<LoginView> {
                       SizedBox(
                         height: 10.0,
                       ),
-                      Text(
-                        'Forgot password?',
-                        style: TextStyle(
-                          color: Colors.white,
+                      InkWell(
+                        onTap: (){
+                          Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => ResetPassword()),
+                          );
+                        },
+                        child: Text(
+                          'Forgot password?',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
