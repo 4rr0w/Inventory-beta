@@ -1,3 +1,4 @@
+import 'package:Inventory/widget/alert_dialog_widget.dart';
 import 'package:Inventory/widget/loader_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -26,6 +27,7 @@ class _FaultReportViewState extends State<FaultReportView> {
   final _date = TextEditingController();
   final _partId = TextEditingController();
   final databaseReference = Firestore.instance;
+  bool confirm = false;
 
   FlutterToast flutterToast;
 
@@ -49,7 +51,7 @@ class _FaultReportViewState extends State<FaultReportView> {
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
-        color: Colors.green,
+        color: message == "Cancelled" ? Colors.blueAccent:Colors.green,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -87,30 +89,85 @@ class _FaultReportViewState extends State<FaultReportView> {
     );
   }
 
+  Future<void> _showMyDialog(String Id) async {
+    return showDialog<void>(
+      barrierColor: Colors.white,
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Please note the Id!',
+          style: TextStyle(
+              fontSize: 20
+          ),),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("Report Id - " + Id,
+                  style: TextStyle(
+                      fontSize: 16
+                  ),),
+                Text('Confirm to submit report'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+
+            FlatButton(
+              child: Text('Submit'),
+              color: Colors.green,
+              onPressed: () {
+                confirm = true;
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+          elevation: 25,
+        );
+      },
+    );
+  }
+
 
   Future<void> publishReport() async{
+    confirm = false;
     int timestamp = DateTime.now().millisecondsSinceEpoch;
+    String id = timestamp.toString().substring(1)+site.toString();
 
-    await databaseReference.collection("Reports")
-        .document(timestamp.toString()+site.toString())
-        .setData({
-      'site': _site.text,
-      'title': _title.text,
-      'description':  _description.text,
-      'date': _date.text,
-      'bel-remark': '',
-      'site-remark': '',
-      'closing-date': '',
-      'fault-status': 'Active',
-      'part-id': _partId.text,
-      'timestamp':  timestamp,
-    });
+    await _showMyDialog(id);
+   if(confirm) {
+     await databaseReference.collection("Reports")
+         .document(id)
+         .setData({
+       'site': _site.text,
+       'title': _title.text,
+       'description': _description.text,
+       'date': _date.text,
+       'bel-remark': '',
+       'site-remark': '',
+       'closing-date': '',
+       'fault-status': 'Active',
+       'part-id': _partId.text,
+       'timestamp': timestamp,
+     });
+     _showToast("Fault Report Submitted!");
+   }
+   else
+     _showToast("Cancelled");
+
 
     setState(() {
       loading = false;
     });
 
-    _showToast("Fault Report Submitted!");
+
+
 
     _title.text = "";
     _description.text = "";
@@ -199,7 +256,7 @@ class _FaultReportViewState extends State<FaultReportView> {
                       hintText: 'Fault Description',
                       errortext:  _nullDescription ? "This is required!" : null,
                       prefixIconData: Icons.description,
-                      maxlength: 100,
+                      maxlength: 500,
                       box: true,
                       textColor: Colors.black,
 

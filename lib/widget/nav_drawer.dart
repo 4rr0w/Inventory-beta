@@ -1,4 +1,6 @@
 import 'package:Inventory/model/user_management.dart';
+import 'package:Inventory/ui/pages/change_password.dart';
+import 'package:Inventory/ui/pages/feedback_view.dart';
 import 'package:Inventory/widget/loader_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth;
@@ -72,14 +74,20 @@ class NavDrawer extends StatelessWidget {
           },
           ),
           ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Settings'),
-            onTap: () => {Navigator.of(context).pop()},
+            leading: Icon(Icons.verified_user),
+            title: Text('Change Password'),
+            onTap: () => {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ChangePassword()))
+            },
           ),
           ListTile(
             leading: Icon(Icons.border_color),
             title: Text('Feedback'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () => {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => FeedbackView(site: site,email: email,)))
+            },
           ),
           ListTile(
             leading: Icon(Icons.exit_to_app),

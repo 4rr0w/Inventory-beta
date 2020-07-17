@@ -14,7 +14,6 @@ class UserManagement {
 
          }
           if(snapshot.hasData){
-            print('dash');
             return Dashboard();
           }
           return LoginView();
