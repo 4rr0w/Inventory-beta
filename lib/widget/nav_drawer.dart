@@ -58,8 +58,22 @@ class NavDrawer extends StatelessWidget {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+
+                  Text(
+                    active ? "" : "Profile disabled",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+
                 ],
               ),
+
             decoration: BoxDecoration(
                 color: Colors.blue,
                 ),

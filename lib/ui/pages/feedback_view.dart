@@ -1,7 +1,5 @@
-import 'package:Inventory/widget/alert_dialog_widget.dart';
 import 'package:Inventory/widget/loader_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:Inventory/widget/button_widget.dart';

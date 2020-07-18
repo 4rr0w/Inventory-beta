@@ -4,22 +4,21 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'failt_view.dart';
+
 class FaultHistoryView extends StatefulWidget {
 
   final int site;
+  final String type;
 
-  const FaultHistoryView({Key key, this.site}) : super(key: key);
+  const FaultHistoryView({Key key, this.site, this.type}) : super(key: key);
 
   @override
-  _FaultHistoryViewState createState() => _FaultHistoryViewState(site);
+  _FaultHistoryViewState createState() => _FaultHistoryViewState();
 
 }
 
 class _FaultHistoryViewState extends State<FaultHistoryView> {
-
-  final  int site;
-
-  _FaultHistoryViewState(this.site);
 
 
   @override
@@ -28,7 +27,7 @@ class _FaultHistoryViewState extends State<FaultHistoryView> {
         appBar: new AppBar(
         title: new Text("Fault History"),
     ),
-    body: new FaultsList(site: site),
+    body: new FaultsList(site: widget.site,type : widget.type)
     );
   }
 
@@ -37,8 +36,9 @@ class _FaultHistoryViewState extends State<FaultHistoryView> {
 
 class FaultsList extends StatelessWidget {
   final int site;
+  final String type;
 
-  const FaultsList({Key key, this.site}) : super(key: key);
+  const FaultsList({Key key, this.site, this.type}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +56,10 @@ class FaultsList extends StatelessWidget {
                 color: Colors.white,
                 child: InkWell(
                   onTap: (){
-
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>
+                        FaultView(id: document.documentID , site: site, type: type)));
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),

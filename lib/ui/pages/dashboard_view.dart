@@ -7,8 +7,6 @@ import "package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart";
 import 'package:Inventory/widget/nav_drawer.dart';
 import 'package:Inventory/widget/wave_widget.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'fault_report_view.dart';
 
 class Dashboard extends StatefulWidget{
@@ -50,21 +48,20 @@ class _DashboardState extends State<Dashboard> {
           SizedBox(
             width: 15.0,
           ),
-          Center(
-            child: Expanded(
+          Expanded(
               child: Text(
                 message,
                 style: TextStyle(
                   color: Colors.black,
                 ),
                 overflow: TextOverflow.fade,
-                maxLines: 1,
+                maxLines: 2,
                 softWrap: false,
 
 
               ),
             ),
-          ),
+
 
         ],
       ),
@@ -95,13 +92,7 @@ class _DashboardState extends State<Dashboard> {
         active = await datasnapshot.data['active'];
       }
     });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('id', id);
-    prefs.setString('email', email);
-    prefs.setString('type', type);
-    prefs.setBool('active', active);
 
-    prefs.setInt("site",site);
 
     setState(() {
       loading = false;
@@ -224,11 +215,18 @@ class _DashboardState extends State<Dashboard> {
                       borderRadius: BorderRadius.circular(24.0),
                       splashColor: Colors.blue,
                       onTap: (){
-                        site == 0 ? _showToast("Only a non-admin user can raise a fault!"):
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => FaultReportView(site: site,))
-                        );
+
+                            if (active) {
+                              site == 0 ? _showToast("Only a non-admin user can raise a fault!"):Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (context) =>
+                                      FaultReportView(site: site))
+                              );
+                            }
+                            else{
+                              _showToast("Profile is disabled. Please contact project management team.");
+                            }
+
 
                       },
                       child: MyItems(Icons.report,"Fault Reporting",Colors.black)),
@@ -241,16 +239,21 @@ class _DashboardState extends State<Dashboard> {
                       borderRadius: BorderRadius.circular(24.0),
                       splashColor: Colors.blue,
                       onTap: (){
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => FaultHistoryView(site: site))
-                        );
+                        if(active){
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => FaultHistoryView(site: site, type : type))
+                          );
+                        }
+                        else
+                          {
+                            _showToast("Profile is disabled. Please contact project management team.");
+                          }
 
                       },
                       child: MyItems(Icons.history,"Fault History",Colors.black)),
                 ),
-                inkwellsplash(Icons.flag,"Fault Closure","/FaultReportView"),
-                inkwellsplash(Icons.perm_phone_msg,"Customer Care","/FaultReportView"),
+              
                  
                   ],
 
