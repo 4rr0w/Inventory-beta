@@ -393,7 +393,7 @@ class _FaultViewState extends State<FaultView> {
                     controller: _belRemark,
                     textColor: Colors.black,
                     hintText: 'BEL Remark',
-                    maxlength: 2,
+                    maxlength: 100,
                     obscureText: false,
                     prefixIconData: Icons.feedback,
                     enabled: ((widget.site != 0) || ( widget.type == "SuperUser"))? false : (true && _faultActive.text == 'Active'),
@@ -404,10 +404,10 @@ class _FaultViewState extends State<FaultView> {
 
 
                   TextFieldWidget(
-                    controller: _belRemark,
+                    controller: _userRemarkhjh,
                     textColor:  Colors.black,
                     hintText: 'Site Remark',
-                    maxlength: 2,
+                    maxlength: 100,
                     obscureText: false,
                     prefixIconData: Icons.feedback,
                     enabled: (widget.site == 0 || _belRemark.text == '' || ( widget.type == "Super User")) ? false : (true && _faultActive.text == 'Active'),
