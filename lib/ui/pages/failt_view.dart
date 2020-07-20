@@ -1,10 +1,7 @@
 import 'package:Inventory/widget/loader_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import 'package:Inventory/widget/button_widget.dart';
 import 'package:Inventory/widget/text_field.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -396,7 +393,7 @@ class _FaultViewState extends State<FaultView> {
                     maxlength: 100,
                     obscureText: false,
                     prefixIconData: Icons.feedback,
-                    enabled: ((widget.site != 0) || ( widget.type == "SuperUser"))? false : (true && _faultActive.text == 'Active'),
+                    enabled: ((widget.site != 0) || ( widget.type == "Super User"))? false : (true && _faultActive.text == 'Active'),
                   ),
                   SizedBox(
                     height: 20.0,
@@ -404,7 +401,7 @@ class _FaultViewState extends State<FaultView> {
 
 
                   TextFieldWidget(
-                    controller: _userRemarkhjh,
+                    controller: _userRemark,
                     textColor:  Colors.black,
                     hintText: 'Site Remark',
                     maxlength: 100,
